@@ -1,0 +1,43 @@
+# .github/workflows/daily-commit.yml
+
+name: "DevSync Daily Commit"
+
+on:
+  # 1. Run once per day at 5:30 AM UTC (uses specific hours/minutes)
+  schedule:
+    - cron: "30 5 * * *"
+    
+  # 2. Allow manual triggering from the "Actions" tab
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    
+    # Give the workflow write permissions to push a commit
+    permissions:
+      contents: write
+      
+    steps:
+      # Step 1: Check out the repository's code
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      # Step 2: The step with the required email in its name
+      - name: "22f2000771@ds.study.iitm.ac.in"
+        run: echo "This step satisfies the email name requirement."
+
+      # Step 3: Create and push the commit
+      - name: "Create daily commit"
+        run: |
+          # Configure git user
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Create a new file or update an existing one
+          echo "Last automated update: $(date)" > daily-status-log.txt
+          
+          # Add, commit, and push the change
+          git add daily-status-log.txt
+          git commit -m "Automated daily status update [skip ci]" -a || echo "No changes to commit"
+          git push
